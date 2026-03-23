@@ -1,24 +1,19 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <title>Student Details</title>
-</head>
 <body>
 
 <h1>Student Details</h1>
-
-<p id="Syed Waseem Irfan"></p>
-<p id="2023BCS0100"></p>
-<p id="100"></p>
+<p id="data"></p>
 
 <script>
-fetch('http://backend:5000/student-details')
+fetch("http://localhost:5000/student-details")
 .then(response => response.json())
 .then(data => {
-    document.getElementById("name").innerText = "Name: " + data.name;
-    document.getElementById("roll").innerText = "Roll: " + data.roll;
-    document.getElementById("register").innerText = "Register: " + data.register;
-});
+    document.getElementById("data").innerHTML =
+        "Name: " + data.name + "<br>" +
+        "Roll: " + data.roll;
+})
+.catch(error => console.error("Error:", error));
 </script>
 
 </body>
