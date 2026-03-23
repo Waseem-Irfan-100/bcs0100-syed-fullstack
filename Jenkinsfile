@@ -10,7 +10,7 @@ pipeline {
 
         stage('Checkout') {
             steps {
-                git 'https://github.com/your-username/your-repo.git'
+                git 'https://github.com/Waseem-Irfan-100/bcs0100-syed-fullstack.git'
             }
         }
 
@@ -28,7 +28,7 @@ pipeline {
 
         stage('Docker Login') {
             steps {
-                sh 'docker login -u $USERNAME -p YOUR_PASSWORD'
+                sh 'docker login -u $USERNAME -p Sirmv@123'
             }
         }
 
