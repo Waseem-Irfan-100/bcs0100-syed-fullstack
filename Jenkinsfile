@@ -10,7 +10,7 @@ pipeline {
 
         stage('Checkout') {
             steps {
-                git 'https://github.com/Waseem-Irfan-100/bcs0100-syed-fullstack.git'
+                checkout scm
             }
         }
 
