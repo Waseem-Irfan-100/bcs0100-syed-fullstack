@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Details</title>
+</head>
+<body>
+
+<h1>Student Details</h1>
+
+<p id="Syed Waseem Irfan"></p>
+<p id="2023BCS0100"></p>
+<p id="100"></p>
+
+<script>
+fetch('http://backend:5000/student-details')
+.then(response => response.json())
+.then(data => {
+    document.getElementById("name").innerText = "Name: " + data.name;
+    document.getElementById("roll").innerText = "Roll: " + data.roll;
+    document.getElementById("register").innerText = "Register: " + data.register;
+});
+</script>
+
+</body>
+</html>
