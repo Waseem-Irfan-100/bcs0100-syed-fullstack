@@ -6,7 +6,9 @@
 <p id="data"></p>
 
 <script>
+// ✅ THIS IS THE CORRECT URL FOR DOCKER (browser side)
 fetch("http://localhost:5000/student-details")
+
 .then(response => response.json())
 .then(data => {
     document.getElementById("data").innerHTML =
