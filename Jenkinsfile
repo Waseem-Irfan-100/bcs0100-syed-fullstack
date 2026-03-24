@@ -2,41 +2,74 @@ pipeline {
     agent any
 
     environment {
-        USERNAME = "2023bcs0100syedwaseemirfan"
-        TAG = "100_2023bcs0100"
+        DOCKER_HUB_USER = '2023bcs0100syedwaseemirfan'
+        ROLL = '2023bcs0100'
+        TAG = "${env.BUILD_NUMBER}"
     }
 
     stages {
 
-        stage('Checkout') {
+        stage('Checkout Code') {
             steps {
                 checkout scm
             }
         }
 
-        stage('Build Backend Image') {
+        stage('Build Docker Images') {
             steps {
-                sh 'docker build -t $USERNAME/${TAG}_backend ./backend'
+                sh """
+                docker build -t ${DOCKER_HUB_USER}/${ROLL}_frontend:${TAG} ./frontend
+                docker build -t ${DOCKER_HUB_USER}/${ROLL}_backend:${TAG} ./backend
+
+                docker tag ${DOCKER_HUB_USER}/${ROLL}_frontend:${TAG} ${DOCKER_HUB_USER}/${ROLL}_frontend:latest
+                docker tag ${DOCKER_HUB_USER}/${ROLL}_backend:${TAG} ${DOCKER_HUB_USER}/${ROLL}_backend:latest
+                """
             }
         }
 
-        stage('Build Frontend Image') {
+        stage('Login to Docker Hub') {
             steps {
-                sh 'docker build -t $USERNAME/${TAG}_frontend ./frontend'
+                withCredentials([usernamePassword(
+                    credentialsId: 'dockerhub_creds', 
+                    usernameVariable: 'USER', 
+                    passwordVariable: 'PASS'
+                )]) {
+                    sh 'echo $PASS | docker login -u $USER --password-stdin'
+                }
             }
         }
 
-        stage('Docker Login') {
+        stage('Push Images to Docker Hub') {
             steps {
-                sh 'docker login -u $USERNAME -p Sirmv@123'
+                sh """
+                docker push ${DOCKER_HUB_USER}/${ROLL}_frontend:${TAG}
+                docker push ${DOCKER_HUB_USER}/${ROLL}_frontend:latest
+
+                docker push ${DOCKER_HUB_USER}/${ROLL}_backend:${TAG}
+                docker push ${DOCKER_HUB_USER}/${ROLL}_backend:latest
+                """
             }
         }
 
-        stage('Push Images') {
+        stage('Verify Images') {
             steps {
-                sh 'docker push $USERNAME/${TAG}_backend'
-                sh 'docker push $USERNAME/${TAG}_frontend'
+                sh 'docker images'
             }
+        }
+    }
+
+    post {
+        always {
+            sh 'docker logout'
+            cleanWs()
+        }
+
+        success {
+            echo 'Pipeline executed successfully! Images pushed to Docker Hub.'
+        }
+
+        failure {
+            echo 'Pipeline failed. Check logs.'
         }
     }
 }
